@@ -15,7 +15,7 @@ source("code/00_viz-settings.R")
 
 #--i used plot digitizer https://plotdigitizer.com/app
 
-d <- read_excel("data/raw/beres2017-weed-suppression-cereals.xlsx", skip = 5)
+d <- read_excel("data/beres2017-weed-suppression-cereals.xlsx", skip = 5)
 
 d2 <- 
   d %>% 
@@ -26,6 +26,8 @@ d2 <-
 
 
 # fig ---------------------------------------------------------------------
+
+#--normal
 
 d2 %>% 
   filter(!grepl("trit", crop)) %>% 
@@ -40,20 +42,23 @@ d2 %>%
        caption = "Based on data from Canada, Beres et al. 2017",
        fill = NULL,
        title = "Rye is valued as a weed-suppressive crop") + 
-  th1_leginbox45 + 
+  th1_gbasic +
   theme(axis.title.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5),
         legend.position = c(0.2, 0.8),
         legend.background = element_rect(fill =  "transparent"),
-        axis.text.x = element_text(color = c("red", "black", "red", "black", "black", "black"))) +
+        axis.text.x = element_text(angle = 45, hjust = 1, 
+                                   size = rel(0.9), 
+                                   color = c("red", "black", "red", "black", "black", "black"))) +
   scale_fill_manual(values = c(p2_ylw, p2_blu))
 
 
+#--flipped
 d2 %>% 
   filter(!grepl("trit", crop)) %>% 
   select(type, crop, broadleaf, grass, tot) %>% 
   pivot_longer(broadleaf:grass) %>% 
   unite(type, crop, col = "crop", sep = " ") %>%
-  mutate_if(is.character, str_to_title) %>% 
+  mutate_if(is.character, str_to_sentence) %>% 
   ggplot(aes(reorder(crop, tot), value)) + 
   geom_col(aes(fill = name), color = "black") + 
   labs(x = NULL,
@@ -62,11 +67,13 @@ d2 %>%
        fill = NULL,
        title = "Rye is valued as a weed-suppressive crop") + 
   th1_gbasic + 
-  theme(axis.title.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5),
+  theme(plot.title.position = "plot",
+        plot.title = element_text(size = rel(3)),
         legend.position = c(0.8, 0.2),
         legend.background = element_rect(fill =  "transparent"),
-        axis.text.y = element_text(color = c("red", "black", "red", "black", "black", "black"))) +
+        axis.text.y = element_text(#color = c(p2_red, "black", p2_red, "black", "black", "black"),
+                                   face = c("bold", "plain", "bold", "plain", "plain", "plain"))) +
   scale_fill_manual(values = c(p2_ylw, p2_blu)) + 
   coord_flip()
 
-ggsave("")
+ggsave("figsR/suppressive-value-rye.png", width = 8, height = 6)

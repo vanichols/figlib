@@ -4,11 +4,32 @@
 Sys.setenv(LANG = "en")
 
 library(ggplot2)
+theme_set(theme_bw())
 
+
+
+# useful code lines for themes --------------------------------------------
+
+#--moves plot title to align with y-axis text
+#      plot.title.position = "plot"
+
+#--changes x axis text to 45 angle
+#   axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.9))
+
+#--changes y axis title to be horizontal
+#    axis.title.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5),
+
+#--makes legend background transparent
+#     legend.background = element_rect(fill =  "transparent")
+
+#--highlight certain axis texts in color or face
+#      axis.text.y = element_text(
+#                  color = c(p2_red, "black", p2_red, "black", "black", "black"),
+#                 face = c("bold", "plain", "bold", "plain", "plain", "plain") ) 
+  
 
 # themes ------------------------------------------------------------------
 
-theme_set(theme_bw())
 
 th1_gbasic <- 
   theme(
@@ -19,56 +40,6 @@ th1_gbasic <-
     plot.title = element_text(size = rel(2)),
     legend.text = element_text(size = rel(1.5))
   )
-
-th1_x45 <- 
-  theme(
-  strip.text = element_text(size = rel(1.5)),
-  strip.background = element_rect(fill = "tan"),
-  axis.text = element_text(size = rel(1.2)),
-  axis.title = element_text(size = rel(1.3)),
-  axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.9)),
-  #axis.title.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5),
-  plot.title = element_text(size = rel(2))
-)
-
-th1_yhoriz <- 
-  theme(
-    strip.text = element_text(size = rel(1.5)),
-    strip.background = element_rect(fill = "tan"),
-    axis.text = element_text(size = rel(1.2)),
-    axis.title = element_text(size = rel(1.3)),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.9)),
-    axis.title.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5),
-    plot.title = element_text(size = rel(2))
-  )
-
-th1_legend <- 
-  theme(
-    strip.text = element_text(size = rel(1.5)),
-    strip.background = element_rect(fill = "tan"),
-    axis.text = element_text(size = rel(1.2)),
-    axis.title = element_text(size = rel(1.3)),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.9)),
-    #axis.title.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5),
-    plot.title = element_text(size = rel(2)),
-    legend.position = "top",
-    legend.text = element_text(size = rel(1.5))
-  )
-
-th1_leginbox45 <- 
-  theme(
-    strip.text = element_text(size = rel(1.5)),
-    strip.background = element_rect(fill = "tan"),
-    axis.text = element_text(size = rel(1.2)),
-    axis.title = element_text(size = rel(1.3)),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = rel(0.9)),
-    #axis.title.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5),
-    plot.title = element_text(size = rel(2)),
-    legend.position = c(0.8, 0.8),
-    legend.text = element_text(size = rel(1.5))
-  )
-
-
 
 
 # colors ------------------------------------------------------------------
