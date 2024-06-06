@@ -13,12 +13,26 @@ source("00_viz-settings.R")
 
 # canada data --------------------------------------------------------------------
 
+# Canada sites are 4deg C average, and 450 mm rain
+
 d <- 
-  read_excel("../data/literature-summary.xlsx", sheet = "Daly_ylds") %>% 
+  read_excel("../data/pgrain_literature-summary.xlsx", sheet = "Daly_ylds") %>% 
   janitor::clean_names() %>% 
   fill(site, rye_type)
 
 
+
+# look at at --------------------------------------------------------------
+
+#--It says the biomass is without the grain, so it is not the total aboveground biomass
+
+d %>% 
+  filter(nfert_kgha > 0) %>% 
+  #mutate(totbio_kgha = grain_kgha + biomass_kgha) %>% 
+  pivot_longer(grain_kgha:biomass_kgha) %>% 
+  ggplot(aes(rye_type, value, group = rye_type)) +
+  geom_col(aes(fill = name)) +
+  facet_grid(site ~ year)
 
 # fig ---------------------------------------------------------------------
 
@@ -48,14 +62,15 @@ f1 <-
   geom_line(aes(color = rye_type), size = 2, show.legend = F) + 
   geom_label(data = d_labs, aes(x = 2018.5, y = value, label = rye_type, fill = rye_type), show.legend = F, size = 6, color = "white") +
   facet_grid(.~name2) + 
-  th1_xvert + 
   scale_y_continuous(labels = label_comma()) +
   scale_x_continuous(limits = c(2017.9, 2019.1), breaks = c(2018, 2019)) +
   scale_color_manual(values = c(p4_blu, p4_grn, p4_pnk, p4_ylw)) +
   scale_fill_manual(values = c(p4_blu, p4_grn, p4_pnk, p4_ylw)) +
   labs(x = NULL,
        y= "kg ha-1",
-       title = "Canada trials, two years of data") + 
+       title = "Canada trials, two years of data",
+       caption = "Data from Daly et al. 2022, averaged over two sites") + 
+  th1_gbasic + 
   theme(axis.text.x = element_text(angle = 0, size = rel(1.4), hjust = 0.5))
 
 
