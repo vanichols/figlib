@@ -1,14 +1,13 @@
 #--make figure of yield issues in perennial things
 
 
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
 library(tidyverse)
 library(readxl)
 library(scales)
 library(patchwork)
 
 theme_set(theme_bw())
+
 source("00_viz-settings.R")
 
 # canada data --------------------------------------------------------------------
@@ -16,7 +15,7 @@ source("00_viz-settings.R")
 # Canada sites are 4deg C average, and 450 mm rain
 
 d <- 
-  read_excel("../data/pgrain_literature-summary.xlsx", sheet = "Daly_ylds") %>% 
+  read_excel("data/pgrain_literature-summary.xlsx", sheet = "Daly_ylds") %>% 
   janitor::clean_names() %>% 
   fill(site, rye_type)
 
@@ -83,7 +82,6 @@ f1gr <-
   geom_label(data = d_labs %>% 
                filter(name2 == "Grain"), aes(x = 2018.5, y = value, label = rye_type, fill = rye_type), show.legend = F, size = 6, color = "white") +
   facet_grid(.~name2) + 
-  th1_xvert + 
   scale_y_continuous(labels = label_comma()) +
   scale_x_continuous(limits = c(2017.9, 2019.1), breaks = c(2018, 2019)) +
   scale_color_manual(values = c(p4_blu, p4_grn, p4_pnk, p4_ylw)) +
@@ -99,7 +97,7 @@ f1gr
 
 
 d2 <- 
-  read_excel("../data/literature-summary.xlsx", sheet = "iwg_yields") %>% 
+  read_excel("", sheet = "iwg_yields") %>% 
   janitor::clean_names() %>% 
   select(citation, standage_yrs:biomass_kgha) %>% 
   fill(citation)
