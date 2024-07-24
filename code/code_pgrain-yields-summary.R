@@ -117,7 +117,7 @@ d %>%
   ggplot(aes(cropF, grain_kgha)) + 
   geom_jitter(aes(fill = citation, shape = citation), width = 0.1, size = 5) + 
   scale_fill_manual(values = c(p7_ora, p7_pur, p7_grn, p7_ltb, p7_blu, p7_ylw, p7_dko, p2_red, p4_pnk, p4_grn)) +
-  scale_shape_manual(values = c(21, 22, 18, 23, 24, 25, 20, 23, 20, 25)) + 
+  scale_shape_manual(values = c(21, 22, 18, 23, 24, 25, 17, 23, 20, 25)) + 
 
   scale_y_continuous(labels = label_comma(), limits = c(0, 3000)) +
   th1_gbasic + 
@@ -126,7 +126,7 @@ d %>%
        caption = "*Intermediate Wheatgrass, commercially sold grain known as Kernza",
        fill = NULL,
        shape = NULL) + 
-  theme(legend.position = c(0.9, 0.83), 
+  theme(legend.position = c(0.9, 0.75), 
         #legend.justification = c(1, 1),
         axis.title.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5, size = rel(1.3)), 
         legend.background = element_rect(fill =  "transparent"),
@@ -163,16 +163,55 @@ d %>%
        caption = "*Intermediate Wheatgrass, commercially sold grain known as Kernza",
        fill = NULL,
        shape = NULL,
-       title = "Perennial cereal rye is a promising perennial grain",
-       subtitle = "Yield results taken from 10 published studies") + 
+       title = "Perennial cereal rye is a promising, under-studied perennial grain",
+       subtitle = "Yields from 10 published studies") + 
   theme(legend.position = c(0.9, 0.83), 
         #legend.justification = c(1, 1),
         axis.title.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5, size = rel(1.3)), 
         legend.background = element_rect(fill =  "transparent"),
         legend.text = element_text(size = rel(0.9)),
         plot.caption = element_text(face = "italic"),
+        plot.title.position = "plot",
         axis.text.x = element_text(vjust = 0.5)) + 
   facet_grid(.~year)
 
 
-ggsave("figsR/fig_perennial-grain-lit-summary-3colors.png", width =12, height = 7)
+ggsave("figsR/fig_perennial-grain-lit-summary-3colors.png", width =12, height = 5)
+
+# crop as facet -------------------------------------------------------------
+
+
+d %>% 
+  #  filter(citation != "Clark et al. 2019") %>% 
+  filter(crop %in% c("IWG", "perennial cereal rye", "perennial wheat")) %>% 
+  mutate(crop = str_to_title(crop),
+         crop = ifelse(crop == "Iwg", "IWG*", ifelse(crop == "Perennial Wheat", "Perennial\nWheat", "Perennial\nCereal Rye")),
+         year = ifelse(year == 1, "First\nyear", ifelse(year == 2, "Second\nyear", "Third\nyear"))) %>% 
+  arrange(-grain_kgha) %>% 
+  mutate(
+    cropF = fct_inorder(crop)) %>% 
+  ggplot(aes(year, grain_kgha)) + 
+  geom_jitter(aes(fill = crop, shape = crop), width = 0.1, show.legend = F, size = 5) + 
+  scale_fill_manual(values = c(p2_blu, p2_red, p2_ylw)) +
+  scale_shape_manual(values = c(21, 22, 18)) + 
+  scale_y_continuous(labels = label_comma(), limits = c(0, 3000)) +
+  th1_gbasic + 
+  labs(x = NULL, 
+       y = "Grain yield\n(kg ha-1)", 
+       caption = "*Intermediate Wheatgrass, commercially sold grain known as Kernza",
+       fill = NULL,
+       shape = NULL,
+       title = "Perennial cereal rye is a promising, under-studied perennial grain",
+       subtitle = "Yields from 10 published studies") + 
+  theme(legend.position = c(0.9, 0.83), 
+        #legend.justification = c(1, 1),
+        axis.title.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5, size = rel(1.3)), 
+        legend.background = element_rect(fill =  "transparent"),
+        legend.text = element_text(size = rel(0.9)),
+        plot.caption = element_text(face = "italic"),
+        plot.title.position = "plot",
+        axis.text.x = element_text(vjust = 0.5)) + 
+  facet_grid(.~cropF)
+
+
+ggsave("figsR/fig_perennial-grain-lit-summary-3colors-bycrop.png", width =8, height = 6)
