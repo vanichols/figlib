@@ -110,14 +110,19 @@ d %>%
   filter(crop %in% c("IWG", "perennial cereal rye", "perennial wheat")) %>% 
   mutate(crop = str_to_title(crop),
          crop = ifelse(crop == "Iwg", "IWG*", ifelse(crop == "Perennial Wheat", "Perennial\nWheat", "Perennial\nCereal Rye")),
-         year = ifelse(year == 1, "First year", ifelse(year == 2, "Second Year", "Third Year"))) %>% 
-  arrange(-grain_kgha) %>% 
+         year = ifelse(year == 1, "Year 1", ifelse(year == 2, "Year 2", "Year 3")),
+         yearF = fct_inorder(year)) %>%
+  group_by(crop) %>% 
+  mutate(n = n()) %>% 
+  arrange(-n) %>% 
   mutate(
-    cropF = fct_inorder(crop)) %>% 
-  ggplot(aes(cropF, grain_kgha)) + 
+    cropF = factor(crop, levels = c("IWG*", "Perennial\nWheat", "Perennial\nCereal Rye")),
+    cropF2 = fct_inorder(cropF),
+    cropF3 = fct_rev(cropF2)) %>% 
+  ggplot(aes(yearF, grain_kgha)) + 
   geom_jitter(aes(fill = citation, shape = citation), width = 0.1, size = 5) + 
-  scale_fill_manual(values = c(p7_ora, p7_pur, p7_grn, p7_ltb, p7_blu, p7_ylw, p7_dko, p2_red, p4_pnk, p4_grn)) +
-  scale_shape_manual(values = c(21, 22, 18, 23, 24, 25, 17, 23, 20, 25)) + 
+  scale_fill_manual(values = c(p7_dko, p7_pur, p7_grn, p7_ltb, p7_blu, p7_ylw, p7_ora, p2_red, p4_pnk, p4_grn)) +
+  scale_shape_manual(values = c(25, 22, 18, 23, 24, 21, 17, 23, 20, 25)) + 
 
   scale_y_continuous(labels = label_comma(), limits = c(0, 3000)) +
   th1_gbasic + 
@@ -126,17 +131,18 @@ d %>%
        caption = "*Intermediate Wheatgrass, commercially sold grain known as Kernza",
        fill = NULL,
        shape = NULL) + 
-  theme(legend.position = c(0.9, 0.75), 
+  theme(legend.position = "right", 
         #legend.justification = c(1, 1),
         axis.title.y = element_text(angle = 0, hjust = 0.5, vjust = 0.5, size = rel(1.3)), 
         legend.background = element_rect(fill =  "transparent"),
         legend.text = element_text(size = rel(0.9)),
         plot.caption = element_text(face = "italic"),
         axis.text.x = element_text(vjust = 0.5)) + 
-  facet_grid(.~year)
+  facet_grid(.~cropF)
 
 
-ggsave("figsR/fig_perennial-grain-lit-summary.png", width =12, height = 7)
+ggsave("figsR/fig_perennial-grain-lit-sum-by-crop.png", width =14, height = 7)
+ggsave("figsR/fig_perennial-grain-lit-sum-by-crop-skinny.png", width =12, height = 7)
 
 
 
