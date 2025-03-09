@@ -70,3 +70,9 @@ p5_blu <- "#725DEF"
 p5_pnk <- "#DD217D"
 p5_ora <- "#FF5F00"
 p5_ylw <- "#FFB00D"
+
+
+
+myyieldlab <- (expression(atop("Dry grain yield", paste("(Mg "~ha^-1*")"))))
+myno3lab <- (expression(atop("Nitrate-N", paste("(kg "~ha^-1*" "~year^-1*")"))))
+myno3lab2 <- (expression(paste("Nitrate-N (kg "~ha^-1*""~year^-1*")")))
