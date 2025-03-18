@@ -1,4 +1,5 @@
 library(tidyverse)
+library(scales)
 
 source("code/00_viz-settings.R")
 
@@ -10,12 +11,62 @@ d <- tibble(x1 = c("Entries tested",
                       "Exhibited post-\nharvest re-growth", 
                       "Produced grain in\n2nd growing season",
                    "Produced grain in\n3rd growing season"),
-            x2 = c("", "Candidates for self-cover cropping grain crop", 
-                   "Candidates for bi-annual grain crop", 
-                   "Candidates for perennial grain crop"),
+            x2 = c(" ", 
+                   "Candidates for self-cover cropping cereal", 
+                   "Candidates for bi-annual cereal", 
+                   "Candidates for perennial cereal"),
+            x2alt = c(" ", 
+                   "Candidates for self-cover cropping cereal", 
+                   " ", 
+                   " "),
+            x2alt2 = c("176 entries tested", 
+                   "107 candidates for self-cover cropping grain crop", 
+                   "43 candidates for bi-annual grain crop", 
+                   "3 candidates for perennial grain crop"),
        y1 = c(176, 107, 43, 3),
-       y2 = c(171, 102, 38, 5),
-       y2alt = c(171, 102, 38, 4))
+       y2 = c(171, 102, 38, 7),
+       y3 = c(176, 107, 43, 3))
+
+d2 <- 
+  d %>% 
+  select(x1, x1alt, x2, y1, y2, y3) %>% 
+  mutate(y1_frac = y1/176,
+         y2_frac = y2/176,
+         y1_lab = paste0(round(y1_frac *100, 0), "%")
+  )
+
+
+# light blue, pub ---------------------------------------------------
+
+
+d2 %>% 
+  filter(x1 != "Entries tested") %>% 
+  ggplot(aes(reorder(x1alt, y1, min), y1_frac)) +
+  geom_col(aes(fill = x1), show.legend = F, color = "black") +
+  #--pct labels
+  geom_text(aes(x = x1alt, y = y2_frac, label = y1_lab),
+            hjust = 1, size = 8) +
+  #--text
+  geom_text(aes(x = x1alt, y =  y1_frac + .03, label = x2),
+            hjust = 0, size = 5, fontface = "italic") +
+  coord_flip(clip = "off") +
+  scale_y_continuous(limits = c(0, 1),
+                     labels = label_percent()) +
+  scale_fill_manual(values = c(p4_blu, p7_grn, p4_ylw)) +
+  th1_gbasic +
+  theme(axis.text = element_text(color = "gray50"),
+        plot.margin = margin(0, 2, 0, 0, "cm") ,
+        panel.border = element_rect(color = "gray50")) +
+  labs(
+    x = NULL,
+    y = NULL)
+
+ggsave("figsR/fig_Hayes2012-pub.png",
+       width = 11,
+       height = 4)
+
+
+
 
 d %>% 
   ggplot(aes(reorder(x1, y1, min), y1)) +
@@ -57,31 +108,6 @@ d %>%
 ggsave("figsR/fig_Hayes2012.png",
        width = 11,
        height = 4)
-
-# light blue, pub ---------------------------------------------------
-
-
-d %>% 
-  ggplot(aes(reorder(x1alt, y1, min), y1)) +
-  geom_col(aes(fill = x1), show.legend = F) +
-  geom_text(aes(x = x1alt, y = y2alt, label = y1),
-            hjust = 1, size = 8) +
-  geom_text(aes(x = x1alt, y = y1 + 3, label = x2),
-            hjust = 0, size = 5, fontface = "italic") +
-  coord_flip(clip = "off") +
-  #scale_y_continuous(limits = c(0, 450)) +
-  scale_fill_manual(values = c(p4_blu, p7_grn, p4_ylw, p5_ora)) +
-  th1_gbasic +
-  theme(axis.text = element_text(color = "gray50"),
-        plot.margin = margin(0, 2, 0, 0, "cm") ) +
-  labs(
-    x = NULL,
-    y = NULL)
-
-ggsave("figsR/fig_Hayes2012-pub.png",
-       width = 11,
-       height = 4)
-
 
 # simplified, pres --------------------------------------------------------
 
