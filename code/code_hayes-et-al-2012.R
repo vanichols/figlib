@@ -1,6 +1,7 @@
 library(tidyverse)
 library(scales)
 
+
 source("code/00_viz-settings.R")
 
 d <- tibble(x1 = c("Entries tested", 
@@ -61,13 +62,8 @@ d2 %>%
     x = NULL,
     y = NULL)
 
-ggsave("figsR/fig_Hayes2012-pub.png",
-       width = 11,
-       height = 4)
 
-
-
-
+#--raw numbers labled
 d %>% 
   ggplot(aes(reorder(x1, y1, min), y1)) +
   geom_col(aes(fill = x1), show.legend = F) +
@@ -82,32 +78,33 @@ d %>%
   th1_gbasic +
   labs(
     x = NULL,
-    y = "Number of entries")
-
-
-# dark blue, subcaption ---------------------------------------------------
-
-
-d %>% 
-  ggplot(aes(reorder(x1alt, y1, min), y1)) +
-  geom_col(aes(fill = x1), show.legend = F) +
-  geom_text(aes(x = x1alt, y = y2alt, label = y1),
-            hjust = 1, size = 8) +
-  geom_text(aes(x = x1alt, y = y1 + 5, label = x2),
-            hjust = 0, size = 4, fontface = "italic") +
-  coord_flip(clip = "off") +
-  #scale_y_continuous(limits = c(0, 450)) +
-  scale_fill_manual(values = c(p2_blu, p7_grn, p4_ylw, p2_red)) +
-  th1_gbasic +
-  theme(axis.text = element_text(color = "gray50")) +
-  labs(
-    x = NULL,
-    y = NULL,
+    y = "Number of entries",
     caption = "Data from Hayes et al. 2012")
 
-ggsave("figsR/fig_Hayes2012.png",
+#--labeled with percent
+d2 %>% 
+  mutate(y1_lab = ifelse(x1 == "Entries tested", " ", y1_lab)) %>% 
+  ggplot(aes(reorder(x1, y1, min), y1)) +
+  geom_col(aes(fill = x1), show.legend = F) +
+  geom_text(aes(x = x1, y = y1, label = y1_lab),
+            hjust = 1, size = 8) +
+  geom_text(aes(x = x1, y = y1 + 10, label = x1),
+            hjust = 0, size = 5, fontface = "italic") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 275)) +
+  scale_fill_manual(values = c(p2_blu, p7_grn, p4_ylw, p2_red)) +
+  theme(axis.text.y = element_blank()) +
+  th1_gbasic +
+  labs(
+    x = NULL,
+    y = "Number of entries",
+    caption = "Data from Hayes et al. 2012")
+
+
+ggsave("figsR/fig_Hayes2012-pres-for-ryest.png",
        width = 11,
        height = 4)
+
 
 # simplified, pres --------------------------------------------------------
 
