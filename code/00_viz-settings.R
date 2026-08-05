@@ -42,6 +42,17 @@ th1_gbasic <-
   )
 
 
+th1_pres <- 
+  theme(
+    strip.text = element_text(size = rel(1.5)),
+    strip.background = element_rect(fill = "tan"),
+    axis.text = element_text(size = rel(1.2)),
+    axis.title = element_text(size = rel(1.5)),
+    axis.title.y = element_text(angle = 0, vjust = 0.5),
+    plot.title = element_text(size = rel(2)),
+    legend.text = element_text(size = rel(1.5))
+  )
+
 # colors ------------------------------------------------------------------
 
 
@@ -76,3 +87,36 @@ p5_ylw <- "#FFB00D"
 myyieldlab <- (expression(atop("Dry grain yield", paste("(Mg "~ha^-1*")"))))
 myno3lab <- (expression(atop("Nitrate-N", paste("(kg "~ha^-1*" "~year^-1*")"))))
 myno3lab2 <- (expression(paste("Nitrate-N (kg "~ha^-1*""~year^-1*")")))
+
+
+
+
+
+# colors ------------------------------------------------------------------
+
+p_red1 <- "#ffaaaa"
+p_red2 <- "#d4646a"
+p_red3 <- "#aa3939"
+p_red4 <- "#801515"
+p_red5 <- "#550000"
+
+
+p_yel1 <- "#fffdaa"
+p_yel2 <- "#d4d26a"
+p_yel3 <- "#aaa739"
+p_yel4 <- "#807d15"
+p_yel5 <- "#555300"
+
+
+p_pur1 <- "#9576ab"
+p_pur2 <- "#734c8f"
+p_pur3 <- "#542b72"
+p_pur4 <- "#3a1356"
+p_pur5 <- "#230439"
+
+
+p_gre1 <- "#88cc88"
+p_gre2 <- "#55aa55"
+p_gre3 <- "#2d882d"
+p_gre4 <- "#116611"
+p_gre5 <- "#004400"

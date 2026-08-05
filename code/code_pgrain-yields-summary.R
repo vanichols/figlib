@@ -87,6 +87,15 @@ d_clar <-
   select(citation, site, crop, year, grain_kgha) %>% 
   filter(grepl("Higbee", site))
 
+
+#--from sexy1
+d_dk <- 
+  read_excel("data/pgrain_literature-summary.xlsx", sheet = "DenmarkUNP", skip = 5) %>% 
+  janitor::clean_names() %>% 
+  fill(citation, site, crop) %>% 
+  select(citation, site, crop, year, grain_kgha) 
+
+
 d <- 
   d_daly %>% 
   bind_rows(d_culm) %>% 
@@ -97,7 +106,8 @@ d <-
   bind_rows(d_jung) %>% 
   bind_rows(d_bajg) %>% 
   bind_rows(d_fagn) %>% 
-  bind_rows(d_clar)
+  bind_rows(d_clar) |> 
+  bind_rows(d_dk)
 
 
 # figs --------------------------------------------------------------------
@@ -109,22 +119,22 @@ d %>%
 #  filter(citation != "Clark et al. 2019") %>% 
   filter(crop %in% c("IWG", "perennial cereal rye", "perennial wheat")) %>% 
   mutate(crop = str_to_title(crop),
-         crop = ifelse(crop == "Iwg", "IWG*", ifelse(crop == "Perennial Wheat", "Perennial\nWheat", "Perennial\nCereal Rye")),
+         crop = ifelse(crop == "Iwg", "Kernza*", ifelse(crop == "Perennial Wheat", "Perennial\nWheat", "Perennial\nCereal Rye")),
          year = ifelse(year == 1, "Year 1", ifelse(year == 2, "Year 2", "Year 3")),
          yearF = fct_inorder(year)) %>%
   group_by(crop) %>% 
   mutate(n = n()) %>% 
   arrange(-n) %>% 
   mutate(
-    cropF = factor(crop, levels = c("IWG*", "Perennial\nWheat", "Perennial\nCereal Rye")),
+    cropF = factor(crop, levels = c("Kernza*", "Perennial\nWheat", "Perennial\nCereal Rye")),
     cropF2 = fct_inorder(cropF),
     cropF3 = fct_rev(cropF2)) %>% 
   ggplot(aes(yearF, grain_kgha)) + 
   geom_jitter(aes(fill = citation, shape = citation), width = 0.1, size = 5) + 
-  scale_fill_manual(values = c(p7_dko, p7_pur, p7_grn, p7_ltb, p7_blu, p7_ylw, p7_ora, p2_red, p4_pnk, p4_grn)) +
-  scale_shape_manual(values = c(25, 22, 18, 23, 24, 21, 17, 23, 20, 25)) + 
+  scale_fill_manual(values = c(p7_dko, p7_pur, p7_grn, p7_ltb, p7_blu, p7_ylw, p7_ora, p2_red, p4_pnk, p4_grn, p_pur1)) +
+  scale_shape_manual(values = c(25, 22, 18, 23, 24, 21, 17, 23, 20, 25, 18)) + 
 
-  scale_y_continuous(labels = label_comma(), limits = c(0, 3000)) +
+  #scale_y_continuous(labels = label_comma(), limits = c(0, 5000)) +
   th1_gbasic + 
   labs(x = NULL, 
        y = "Grain yield\n(kg ha-1)", 
