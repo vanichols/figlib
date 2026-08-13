@@ -8,7 +8,8 @@ source("code/00_viz-settings.R")
 d <- 
   tibble(crop = c("Intermediate Wheatgrass", "Kernza", "Perennial\nwheat", "Perennial\nrye"),
        citations = c(1074, 364, 92, 53),
-       grain_yield = c(0.2, 1, 2, 4)) |> 
+       grain_yield = c(0.2, 1, 2, 4),
+       longevity = c(5, 5, 2, 2)) |> 
   mutate(crop = fct_inorder(crop))
 
 
@@ -90,9 +91,31 @@ p2 <-
   th1_pres +
   theme(plot.caption = element_text(face = "italic", color = "gray40"))
 
+p3 <- 
+  d |> 
+  filter(crop != "Intermediate Wheatgrass") |> 
+  ggplot(aes(longevity, citations)) +
+  geom_smooth(method = "lm", se = F) +
+  geom_point(aes(fill = crop), pch = 21, show.legend = F, size = 4) +
+  geom_text_repel(aes(y = citations, x = longevity, label = crop),
+                  fontface = "italic", size = 8,
+                  nudge_y = 10,
+                  nudge_x = -1) +
+  labs(x = "Crop longevity\n(years)**",
+       y = "Web of Science\ncitations*") +
+  scale_x_continuous(limits = c(0, 5.5)) +
+  scale_y_continuous(limits = c(0, 400)) +
+  scale_fill_manual(values = c(p_red4, p_yel1, p_pur5)) +
+  th1_pres +
+  theme(plot.caption = element_text(face = "italic", color = "gray40"))
+
 
 fig_grain + p1 + p2
 
 ggsave("figsR/fig_pgrain-citations-for-OCH2.png",
        width = 15, height = 4.9)
 
+fig_grain + p1 + p3
+
+ggsave("figsR/fig_pgrain-citations-for-OCH3.png",
+       width = 15, height = 4.9)
