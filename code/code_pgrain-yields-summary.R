@@ -113,8 +113,6 @@ d <-
 # figs --------------------------------------------------------------------
 
 
-
-
 d %>% 
 #  filter(citation != "Clark et al. 2019") %>% 
   filter(crop %in% c("IWG", "perennial cereal rye", "perennial wheat")) %>% 
