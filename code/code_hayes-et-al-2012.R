@@ -1,6 +1,6 @@
 library(tidyverse)
 library(scales)
-
+library(writexl)
 
 source("code/00_viz-settings.R")
 
@@ -37,7 +37,7 @@ d2 <-
   )
 
 
-# light blue, pub ---------------------------------------------------
+# 2. light blue, pub ---------------------------------------------------
 
 
 d2 %>% 
@@ -106,7 +106,7 @@ ggsave("figsR/fig_Hayes2012-pres-for-ryest.png",
        height = 4)
 
 
-# simplified, pres --------------------------------------------------------
+# 3. simplified, pres --------------------------------------------------------
 
 
 
@@ -132,3 +132,63 @@ d %>%
 ggsave("figsR/fig_Hayes2012-pres.png",
        width = 11,
        height = 4)
+
+
+# 4. new stacked bar ---------------------------------------------------------
+
+#--raw numbers labled
+d4 <- 
+  d |> 
+  filter(x1 != "Entries tested") |> 
+  select(lab = x1, nu_entries = y1) 
+
+d4 |> 
+  write_xlsx("data/tidy_hayes.xlsx")
+  
+d4 |> 
+  mutate(order = c(1, 2, 3)) |>
+  arrange(order) |> 
+  mutate(lab = as.factor(lab),
+         citation = "Hayes et al. 2012") |> 
+  ggplot(aes(citation, nu_entries)) +
+  geom_col(aes(fill = lab))
+
+df <- 
+  d4 |>
+  mutate(order = c(1, 2, 3)) |>
+  arrange(order) |>
+  mutate(lab = factor(lab, levels = unique(lab)),
+         lab = fct_rev(lab),                          # reverses the stacking order
+         lab = fct_relabel(lab, \(x) str_wrap(x, 22)),
+         citation = "Hayes et al. 2018")
+
+total <- sum(df$nu_entries)
+top   <- levels(df$lab)[1]                            # first level = top of the stack
+
+ggplot(df, aes(citation, nu_entries, fill = lab)) +
+  geom_col(width = 0.6, color = "black") +
+  # centered labels for all segments except the top one
+  geom_text(data = \(d) filter(d, lab != top),
+            aes(label = nu_entries),
+            position = position_stack(vjust = 0.5),
+            size = 10, fontface = "bold", color = "white") +
+  # label for the top (smallest) segment, placed above the bar
+  geom_text(data = \(d) filter(d, lab == top),
+            aes(y = total, label = nu_entries),
+            vjust = -0.4, size = 10, fontface = "bold") +
+  scale_fill_manual(values = c("#e76f51", "#2a9d8f", "#264653")) +  # colors follow the reversed levels
+  scale_y_continuous(expand = expansion(mult = c(0, 0.08))) +        # headroom for the label
+  labs(x = NULL, y = "Number of entries", fill = NULL) +
+  theme_minimal(base_size = 28) +
+  theme(
+    legend.text        = element_text(size = 24, lineheight = 0.9),
+    legend.key.size    = unit(1.2, "cm"),
+    legend.key.spacing.y = unit(0.8, "cm"),    # space between legend entries
+    axis.text.x        = element_text(size = 26, face = "bold"),
+    axis.title.y       = element_text(size = 26),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor   = element_blank()
+  )
+
+ggsave("figsR/hayes_stacked.png", width = 8, height = 7, dpi = 300, bg = "white")
+
