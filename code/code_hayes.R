@@ -31,3 +31,5 @@ d %>%
   ggplot(aes(measurement_year, r_grain)) + 
   geom_jitter(aes(color = species_name), size = 3, width = 0.1) + 
   facet_wrap(.~site)
+
+draw 

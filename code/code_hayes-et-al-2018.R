@@ -4,11 +4,11 @@ library(writexl)
 
 source("code/00_viz-settings.R")
 
-d <- tibble(x1 = c("Entries tested", 
+d <- tibble(x1 = c("Instances tested", 
                    "Exhibited post-harvest re-growth", 
                    "Produced grain in 2nd growing season",
                    "Produced grain in 3rd growing season"),
-            x1alt = c("Entries tested", 
+            x1alt = c("Instances tested", 
                       "Exhibited post-\nharvest re-growth", 
                       "Produced grain in\n2nd growing season",
                    "Produced grain in\n3rd growing season"),
@@ -79,7 +79,33 @@ d %>%
   labs(
     x = NULL,
     y = "Number of entries",
-    caption = "Data from Hayes et al. 2012")
+    caption = "Data from Hayes et al. 2018")
+
+ggsave("figsR/fig_Hayes2018-pres-for-sweden.png",
+       width = 6,
+       height = 4)
+
+
+d %>%
+  mutate(x1F = as.factor(x1)) |> 
+  ggplot(aes(x1F, y1)) +
+  geom_col(aes(fill = x1), show.legend = F) +
+  geom_text(aes(x = x1, y = y1/2, label = y1),
+            hjust = 0.5, size = 8) +
+  geom_text(aes(x = x1, y = y1 + 20, label = x1alt),
+            hjust = 0.5, size = 5, fontface = "italic") +
+  scale_y_continuous(limits = c(0, 275)) +
+  scale_fill_manual(values = c(p2_blu, p7_grn, p4_ylw, p2_red)) +
+  theme(axis.text = element_blank()) +
+  th1_gbasic +
+  labs(
+    x = NULL,
+    y = "Number of evaluations",
+    caption = "Data from Hayes et al. 2018")
+
+ggsave("figsR/fig_Hayes2018-pres-for-sweden.png",
+       width = 11,
+       height = 4)
 
 #--labeled with percent
 d2 %>% 
@@ -101,7 +127,7 @@ d2 %>%
     caption = "Data from Hayes et al. 2012")
 
 
-ggsave("figsR/fig_Hayes2012-pres-for-ryest.png",
+ggsave("figsR/fig_Hayes2018-pres-for-ryest.png",
        width = 11,
        height = 4)
 
